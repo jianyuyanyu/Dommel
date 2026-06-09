@@ -47,8 +47,10 @@ public class PostgresSqlBuilderTests
     [Fact]
     public void PrefixParameter() => Assert.Equal("@Foo", _builder.PrefixParameter("Foo"));
 
-    [Fact]
-    public void QuoteIdentifier() => Assert.Equal("\"Foo\"", _builder.QuoteIdentifier("Foo"));
+    [Theory]
+    [InlineData("Foo", "\"Foo\"")]
+    [InlineData("Fo\"o", "\"Fo\"\"o\"")]
+    public void QuoteIdentifier(string identifier, string expected) => Assert.Equal(expected, _builder.QuoteIdentifier(identifier));
 
     [Fact]
     public void BuildInsert_ThrowsWhenTypeIsNull()

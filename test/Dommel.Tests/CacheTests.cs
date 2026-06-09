@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Collections.Concurrent;
+using Xunit;
 
 namespace Dommel.Tests;
 
@@ -30,6 +31,9 @@ public class CacheTests
             new QueryCacheKey(QueryCacheType.Get, new DummySqlBuilder(), typeof(Foo)),
             new QueryCacheKey(QueryCacheType.Get, new DummySqlBuilder(), typeof(Foo)));
     }
+
+    [Fact]
+    public void SqlBuildersCacheIsThreadSafe() => Assert.IsType<ConcurrentDictionary<string, ISqlBuilder>>(DommelMapper.SqlBuilders);
 
     [Fact]
     public void IsNotEqualCacheType()

@@ -21,7 +21,7 @@ public interface IJsonSqlBuilder : ISqlBuilder
 public class SqlServerSqlBuilder : Dommel.SqlServerSqlBuilder, IJsonSqlBuilder
 {
     /// <inheritdoc />
-    public string JsonValue(string column, string path) => $"JSON_VALUE({column}, '$.{path}')";
+    public string JsonValue(string column, string path) => $"JSON_VALUE({column}, '$.{JsonSqlPath.Escape(path)}')";
 }
 
 /// <summary>
@@ -30,7 +30,7 @@ public class SqlServerSqlBuilder : Dommel.SqlServerSqlBuilder, IJsonSqlBuilder
 public class MySqlSqlBuilder : Dommel.MySqlSqlBuilder, IJsonSqlBuilder
 {
     /// <inheritdoc />
-    public string JsonValue(string column, string path) => $"{column}->'$.{path}'";
+    public string JsonValue(string column, string path) => $"{column}->'$.{JsonSqlPath.Escape(path)}'";
 }
 
 /// <summary>
@@ -39,7 +39,7 @@ public class MySqlSqlBuilder : Dommel.MySqlSqlBuilder, IJsonSqlBuilder
 public class PostgresSqlBuilder : Dommel.PostgresSqlBuilder, IJsonSqlBuilder
 {
     /// <inheritdoc />
-    public string JsonValue(string column, string path) => $"{column}->>'{path}'";
+    public string JsonValue(string column, string path) => $"{column}->>'{JsonSqlPath.Escape(path)}'";
 }
 
 /// <summary>
@@ -48,7 +48,7 @@ public class PostgresSqlBuilder : Dommel.PostgresSqlBuilder, IJsonSqlBuilder
 public class SqliteSqlBuilder : Dommel.SqliteSqlBuilder, IJsonSqlBuilder
 {
     /// <inheritdoc />
-    public string JsonValue(string column, string path) => $"JSON_EXTRACT({column}, '$.{path}')";
+    public string JsonValue(string column, string path) => $"JSON_EXTRACT({column}, '$.{JsonSqlPath.Escape(path)}')";
 }
 
 /// <summary>
@@ -57,5 +57,10 @@ public class SqliteSqlBuilder : Dommel.SqliteSqlBuilder, IJsonSqlBuilder
 public class SqlServerCeSqlBuilder : Dommel.SqlServerCeSqlBuilder, IJsonSqlBuilder
 {
     /// <inheritdoc />
-    public string JsonValue(string column, string path) => $"JSON_VALUE({column}, '$.{path}')";
+    public string JsonValue(string column, string path) => $"JSON_VALUE({column}, '$.{JsonSqlPath.Escape(path)}')";
+}
+
+internal static class JsonSqlPath
+{
+    public static string Escape(string path) => path.Replace("'", "''");
 }

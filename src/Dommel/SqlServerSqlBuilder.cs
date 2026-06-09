@@ -22,7 +22,7 @@ public class SqlServerSqlBuilder : ISqlBuilder
     public string PrefixParameter(string paramName) => $"@{paramName}";
 
     /// <inheritdoc/>
-    public string QuoteIdentifier(string identifier) => $"[{identifier}]";
+    public string QuoteIdentifier(string identifier) => $"[{identifier.Replace("]", "]]")}]";
 
     /// <inheritdoc/>
     public string LimitClause(int count) => $"order by 1 offset 0 rows fetch next {count} rows only";

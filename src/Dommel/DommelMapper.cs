@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Reflection;
@@ -23,7 +22,7 @@ public static partial class DommelMapper
     internal static ITableNameResolver TableNameResolver = new DefaultTableNameResolver();
     internal static IColumnNameResolver ColumnNameResolver = new DefaultColumnNameResolver();
 
-    internal static readonly Dictionary<string, ISqlBuilder> SqlBuilders = new()
+    internal static readonly ConcurrentDictionary<string, ISqlBuilder> SqlBuilders = new()
     {
         ["sqlconnection"] = new SqlServerSqlBuilder(),
         ["sqlceconnection"] = new SqlServerCeSqlBuilder(),
@@ -115,7 +114,7 @@ public static partial class DommelMapper
     /// Example: <c>typeof(SqlConnection)</c>.
     /// </param>
     /// <param name="builder">An implementation of the <see cref="ISqlBuilder"/> interface.</param>
-    public static void AddSqlBuilder(Type connectionType, ISqlBuilder builder) => AddSqlBuilder(connectionType.Name.ToLower(), builder);
+    public static void AddSqlBuilder(Type connectionType, ISqlBuilder builder) => AddSqlBuilder(connectionType.Name.ToLowerInvariant(), builder);
 
     /// <summary>
     /// Adds a custom implementation of <see cref="ISqlBuilder"/>
@@ -133,7 +132,7 @@ public static partial class DommelMapper
     public static ISqlBuilder GetSqlBuilder(IDbConnection connection)
     {
         var connectionTypeName = connection.GetType().Name;
-        var builder = SqlBuilders.TryGetValue(connectionTypeName.ToLower(), out var b) ? b : new SqlServerSqlBuilder();
+        var builder = SqlBuilders.TryGetValue(connectionTypeName.ToLowerInvariant(), out var b) ? b : new SqlServerSqlBuilder();
         LogReceived?.Invoke($"Selected SQL Builder '{builder.GetType().Name}' for connection type '{connectionTypeName}'");
         return builder;
     }

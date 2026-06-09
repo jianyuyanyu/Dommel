@@ -22,7 +22,7 @@ public class SqliteSqlBuilder : ISqlBuilder
     public string PrefixParameter(string paramName) => $"@{paramName}";
 
     /// <inheritdoc/>
-    public string QuoteIdentifier(string identifier) => identifier;
+    public string QuoteIdentifier(string identifier) => $"\"{identifier.Replace("\"", "\"\"")}\"";
 
     /// <inheritdoc/>
     public string LimitClause(int count) => $"limit {count}";
